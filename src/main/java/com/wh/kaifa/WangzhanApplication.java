@@ -9,7 +9,7 @@ public class WangzhanApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WangzhanApplication.class, args);
-		System.out.println("123");
+		System.out.println("success");
 	}
 
 }
