@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wh.kaifa.mapper.CaipaiMapper">
+    <!--<insert id="insertCaipiaoInfo" parameterType="java.util.List">-->
+    <!--insert into t_caipiao_info-->
+    <!--(id, -->
+    <!--betendtime, -->
+    <!--turnnum,-->
+    <!--opentime, -->
+    <!--n1, -->
+    <!--n2, -->
+    <!--n3, -->
+    <!--n4, -->
+    <!--n5, -->
+    <!--OPEN_NUM)-->
+    <!--<foreach collection="list" item="item" index="index" separator="union all">-->
+    <!--(select #{item.id},-->
+    <!--to_date(#{item.betEndTime}, 'yyyy-MM-dd hh24:mi:ss'),-->
+    <!--#{item.turnNum},-->
+    <!--to_date(#{item.openTime},'yyyy-MM-dd HH24:mi:ss'),-->
+    <!--#{item.n1},-->
+    <!--#{item.n2},-->
+    <!--#{item.n3},-->
+    <!--#{item.n4},-->
+    <!--#{item.n5},-->
+    <!--#{item.openNum} -->
+    <!--from dual   )-->
+    <!--</foreach>  -->
+    <!--</insert>-->
+
+    <select id="queryCaipiaoInfo" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select t.id
+        	from T_CAIPIAO_INFO t
+        where t.open_num = #{openNum}
+	</select>
+
+    <select id="queryCaipiaoInfos" parameterType="java.util.List" resultType="com.wh.kaifa.DTO.CaipiaoDTO">
+        select id id,
+        DATE_FORMAT(t.betendtime, 'yyyy-MM-dd hh24:mi:ss') betEndTime,
+        t.turnnum turnNum,
+        DATE_FORMAT(t.opentime, 'yyyy-MM-dd hh24:mi:ss') openTime,
+        t.n1 n1,
+        t.n2 n2,
+        t.n3 n3,
+        t.n4 n4,
+        t.n5 n5,
+        t.OPEN_NUM openNum
+        from T_CAIPIAO_INFO t
+        where t.id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryOpenNumById" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select t.OPEN_NUM FROM T_CAIPIAO_INFO t where t.ID = #{id}
+	</select>
+
+    <select id="queryId" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select min(t.ID) from ${tableName} t where t.ID <![CDATA[>]]> ${minId}
+	</select>
+
+    <select id="between0" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT t.id FROM ${tableName} t WHERE t.ID BETWEEN ${minId} and ${m}
+	</select>
+
+    <select id="queryPages" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select ID from ${tableName}  limit ${page},1000
+	</select>
+
+
+    <select id="queryDiffPages" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select ID from ${tableName} T ORDER BY T.ID  limit ${page},5001
+	</select>
+
+    <select id="queryDiffPagesOfOX" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select ID from ${tableName} T ORDER BY T.ID  limit ${page},10001
+	</select>
+
+    <select id="queryDouble" parameterType="java.util.Map" resultType="com.wh.kaifa.DTO.CaipiaoDTO">
+		select id id,
+        DATE_FORMAT(t.betendtime, 'yyyy-MM-dd hh24:mi:ss') betEndTime,
+        t.turnnum turnNum,
+        DATE_FORMAT(t.opentime, 'yyyy-MM-dd hh24:mi:ss') openTime,
+        t.n1 n1,
+        t.n2 n2,
+        t.n3 n3,
+        t.n4 n4,
+        t.n5 n5,
+        t.OPEN_NUM openNum
+  from T_CAIPIAO_INFO t
+ where t.id in
+       (select w.id - 1 from T_CAIPIAO_INFO w where w.open_num = #{openNum})
+   and t.open_num = #{preOpenNUm}
+	</select>
+
+    <select id="queryFive" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select w3.id id
+  from (select w.id from T_CAIPIAO_INFO w where w.n1 = #{open1}) w3,
+
+       (select w.id from T_CAIPIAO_INFO w where w.n1 = #{open2}) w2,
+
+       (select w.id from T_CAIPIAO_INFO w where w.n1 =#{open3}) w1
+ where w1.id = w2.id - 1
+   and w2.id = w3.id - 1
+    </select>
+
+    <select id="queryFive1" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select w3.id id
+        from (select w.id from T_CAIPIAO_INFO w where w.n2 = #{open1}) w3,
+
+        (select w.id from T_CAIPIAO_INFO w where w.n2 = #{open2}) w2,
+
+        (select w.id from T_CAIPIAO_INFO w where w.n2 =#{open3}) w1
+        where w1.id = w2.id - 1
+        and w2.id = w3.id - 1
+    </select>
+
+    <select id="queryFive2" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select w3.id id
+        from (select w.id from T_CAIPIAO_INFO w where w.n3 = #{open1}) w3,
+
+        (select w.id from T_CAIPIAO_INFO w where w.n3 = #{open2}) w2,
+
+        (select w.id from T_CAIPIAO_INFO w where w.n3 =#{open3}) w1
+        where w1.id = w2.id - 1
+        and w2.id = w3.id - 1
+    </select>
+
+    <select id="queryFive3" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select w3.id id
+        from (select w.id from T_CAIPIAO_INFO w where w.n4 = #{open1}) w3,
+
+        (select w.id from T_CAIPIAO_INFO w where w.n4 = #{open2}) w2,
+
+        (select w.id from T_CAIPIAO_INFO w where w.n4 =#{open3}) w1
+        where w1.id = w2.id - 1
+        and w2.id = w3.id - 1
+    </select>
+
+    <select id="queryFive4" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select w3.id id
+        from (select w.id from T_CAIPIAO_INFO w where w.n5 = #{open1}) w3,
+
+        (select w.id from T_CAIPIAO_INFO w where w.n5 = #{open2}) w2,
+
+        (select w.id from T_CAIPIAO_INFO w where w.n5 =#{open3}) w1
+        where w1.id = w2.id - 1
+        and w2.id = w3.id - 1
+    </select>
+
+
+
+    <select id="queryPosition" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select t.id
+          from T_CAIPIAO_INFO t
+        where CONCAT(t.N1, t.n2, t.N3, t.N4, t.N5) = #{openNum}
+    </select>
+
+    <select id="queryCanladaPosition" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select t.id
+          from T_CANLADA_INFO t
+        where CONCAT(t.N1, t.n2, t.N3) = #{openNum}
+    </select>
+
+    <select id="queryCaipiaoInfo1" parameterType="java.util.List" resultType="com.wh.kaifa.DTO.CanlaDaDTO">
+        select id id,
+        DATE_FORMAT(t.betendtime, 'yyyy-MM-dd hh24:mi:ss') betEndTime,
+        t.turnnum turnNum,
+        DATE_FORMAT(t.opentime, 'yyyy-MM-dd hh24:mi:ss') openTime,
+        t.n1 n1,
+        t.n2 n2,
+        t.n3 n3,
+        t.OPEN_NUM openNum
+        from T_CANLADA_INFO t
+        where t.id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryCanladaDouble"  parameterType="java.util.Map"  resultType="java.lang.Integer">
+        select t1.id
+          from  T_CANLADA_INFO t1
+        where t1.ID in ( select t.ID - 1
+                              from T_CANLADA_INFO t
+                          where CONCAT(t.N1, t.n2, t.N3) = #{openNum})
+            and CONCAT(t1.N1, t1.n2, t1.N3) = #{preOpenNum}
+    </select>
+
+    <select id="queryCanladaDoubleNew"  parameterType="java.util.Map"  resultType="java.lang.Integer">
+        SELECT t1.ID
+            from T_CANLADA_INFO t1
+        where t1.ID in
+          (select t.ID -1  from T_CANLADA_INFO t where t.OPEN_NUM = #{openNum})
+           and t1.OPEN_NUM = #{preOpenNum}
+
+    </select>
+    
+    <select id="queryBwteen" parameterType="java.util.Map" resultType="com.wh.kaifa.DTO.CaipiaoDTO">
+      select id id,
+        DATE_FORMAT(t.betendtime, 'yyyy-MM-dd hh24:mi:ss') betEndTime,
+        t.turnnum turnNum,
+        DATE_FORMAT(t.opentime, 'yyyy-MM-dd hh24:mi:ss') openTime,
+        t.n1 n1,
+        t.n2 n2,
+        t.n3 n3,
+        t.n4 n4,
+        t.n5 n5,
+        t.OPEN_NUM openNum FROM T_CAIPIAO_INFO t where  t.ID  BETWEEN  #{firstId} and  #{endId};
+    </select>
+
+    <select id="queryTwoCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+          t1.id
+      FROM  T_CAIPIAO_INFO t1
+      WHERE   t1.remake LIKE #{openNumNew}
+	          AND t1.ID IN ( ( SELECT t.ID - 1 FROM T_CAIPIAO_INFO t
+	           WHERE remake LIKE  #{openNumNew}) )
+    </select>
+
+    <select id="queryThreeCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+          t2.id
+        FROM  T_CAIPIAO_INFO t2
+        WHERE  t2.remake LIKE #{openNumNew}  and t2.ID IN (
+	    SELECT  t1.ID - 1
+	    FROM  T_CAIPIAO_INFO t1
+	    WHERE
+		    t1.remake LIKE #{openNumNew}
+		AND t1.ID IN ( ( SELECT t.ID - 1 FROM T_CAIPIAO_INFO t WHERE remake LIKE #{openNumNew} ))
+	)
+    </select>
+
+
+    <select id="queryFourCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+	t3.id
+FROM
+	T_CAIPIAO_INFO t3
+WHERE
+	t3.remake LIKE #{openNumNew}
+	AND t3.ID IN (
+	SELECT
+		t2.id - 1
+	FROM
+		T_CAIPIAO_INFO t2
+	WHERE
+		t2.remake LIKE #{openNumNew}
+		AND t2.ID IN (
+		SELECT
+			t1.ID - 1
+		FROM
+			T_CAIPIAO_INFO t1
+		WHERE
+			t1.remake LIKE #{openNumNew}
+			AND t1.ID IN ( ( SELECT t.ID - 1 FROM T_CAIPIAO_INFO t WHERE remake LIKE #{openNumNew} ) )
+		)
+	)
+    </select>
+
+    <select id="querySizeNew" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select t10.ID from T_CAIPIAO_INFO t10 where t10.ID in(
+        select t9.ID - 1 from T_CAIPIAO_INFO t9 where t9.ID in(
+        select t8.ID - 1 from T_CAIPIAO_INFO t8 where t8.ID in (
+        select t7.ID - 1 from T_CAIPIAO_INFO t7 where t7.ID in(
+        select t6.ID - 1 from T_CAIPIAO_INFO t6 where t6.ID in (
+        select t5.ID - 1 from T_CAIPIAO_INFO t5 where t5.ID in (
+        select t4.ID - 1 FROM T_CAIPIAO_INFO t4 WHERE t4.ID in (
+        select t3.ID - 1 FROM T_CAIPIAO_INFO t3 where t3.ID in (
+        select t2.ID - 1 from T_CAIPIAO_INFO t2 where t2.ID in (
+        select t1.ID - 1 from T_CAIPIAO_INFO t1 where 1 = 1
+                                <if test="first ==  0">
+                                    and t1.REMARK <![CDATA[ < ]]> 23
+                                </if>
+                                <if test="first ==  1">
+                                    and t1.REMARK <![CDATA[ >= ]]> 23
+                                </if>)
+                                <if test="second ==  0">
+                                    and t2.REMARK <![CDATA[ < ]]> 23
+                                 </if>
+                                <if test="second ==  1">
+                                  and t2.REMARK <![CDATA[ >= ]]> 23
+                                </if>)
+                                <if test="three ==  0">
+                                  and t3.REMARK <![CDATA[ < ]]> 23
+                                </if>
+                                <if test="three ==  1">
+                                  and t3.REMARK <![CDATA[ >= ]]> 23
+                               </if>)
+                              <if test="four ==  0">
+                                  and t4.REMARK <![CDATA[ < ]]> 23
+                              </if>
+                              <if test="four ==  1">
+                                and t4.REMARK <![CDATA[ >= ]]> 23
+                              </if>)
+                              <if test="five ==  0">
+                                and t5.REMARK <![CDATA[ < ]]> 23
+                              </if>
+                              <if test="five ==  1">
+                                and t5.REMARK <![CDATA[ >= ]]> 23
+                              </if>)
+                              <if test="six ==  0">
+                                and t6.REMARK <![CDATA[ < ]]> 23
+                            </if>
+                            <if test="six ==  1">
+                              and t6.REMARK <![CDATA[ >= ]]> 23
+                            </if>)
+                            <if test="seven ==  0">
+                                and t7.REMARK <![CDATA[ < ]]> 23
+                            </if>
+                            <if test="seven ==  1">
+                                and t7.REMARK <![CDATA[ >= ]]> 23
+                            </if>)
+                            <if test="eigth ==  0">
+                                and t8.REMARK <![CDATA[ < ]]> 23
+                            </if>
+                            <if test="eigth ==  1">
+                                and t8.REMARK <![CDATA[ >= ]]> 23
+                            </if>)
+                            <if test="night ==  0">
+                                and t9.REMARK <![CDATA[ < ]]> 23
+                            </if>
+                            <if test="night ==  1">
+                                and t9.REMARK <![CDATA[ >= ]]> 23
+                            </if>)
+                            <if test="ten ==  0">
+                                and t10.REMARK <![CDATA[ < ]]> 23
+                            </if>
+                            <if test="ten ==  1">
+                                and t10.REMARK <![CDATA[ >= ]]> 23
+                            </if>
+
+    </select>
+
+
+    <select id="queryRemark" parameterType="java.util.List" resultType="java.lang.Integer">
+        select REMARK + 0 from T_CAIPIAO_INFO t where  t.ID in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </select>
+
+
+
+</mapper>
